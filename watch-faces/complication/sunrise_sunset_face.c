@@ -135,6 +135,14 @@ static void _sunrise_sunset_face_update(sunrise_sunset_state_t *state) {
             timestamp += 86400;
             scratch_time = watch_utility_date_time_from_unix_time(timestamp, 0);
         }
+        // Handle hour underflow from timezone conversion
+        while (scratch_time.unit.hour < 0) {
+            scratch_time.unit.hour += 24;
+            // Increment day (this will be handled by the date arithmetic)
+            uint32_t timestamp = watch_utility_date_time_to_unix_time(scratch_time, 0);
+            timestamp += 86400;
+            scratch_time = watch_utility_date_time_from_unix_time(timestamp, 0);
+        }
 
         if (scratch_time.unit.minute == 60) {
             scratch_time.unit.minute = 0;
@@ -169,6 +177,14 @@ static void _sunrise_sunset_face_update(sunrise_sunset_state_t *state) {
         // Handle hour overflow from timezone conversion
         while (scratch_time.unit.hour >= 24) {
             scratch_time.unit.hour -= 24;
+            // Increment day (this will be handled by the date arithmetic)
+            uint32_t timestamp = watch_utility_date_time_to_unix_time(scratch_time, 0);
+            timestamp += 86400;
+            scratch_time = watch_utility_date_time_from_unix_time(timestamp, 0);
+        }
+        // Handle hour underflow from timezone conversion
+        while (scratch_time.unit.hour < 0) {
+            scratch_time.unit.hour += 24;
             // Increment day (this will be handled by the date arithmetic)
             uint32_t timestamp = watch_utility_date_time_to_unix_time(scratch_time, 0);
             timestamp += 86400;
